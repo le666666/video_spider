@@ -2,7 +2,7 @@
 /**
  * @package Video_spider
  * @author  iami233
- * @version 1.0.0
+ * @version 1.0.2
  * @link    https://github.com/5ime/Video_spider
 **/
 
@@ -73,7 +73,7 @@ class Video
     }
 
     public function weishi($url){
-        preg_match('/feed\/(.*)\/w/',$url,$id);
+        preg_match('/feed\/(.*)\b/',$url,$id);
         if (strpos($url,'h5.weishi') != false){
             $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid='.$id[1]),true);
         } else {
@@ -95,8 +95,13 @@ class Video
     }
 
     public function weibo($url){
-        preg_match('/show\/(.*)\b/',$url,$id);
-        $arr = json_decode($this->curl('https://video.h5.weibo.cn/s/video/object?object_id='.$id[1]),true);
+        if (strpos($url,'show?fid=') != false){
+            preg_match('/fid=(.*)/',$url,$id);
+            $arr = json_decode($this->curl('https://video.h5.weibo.cn/s/video/object?object_id='.$id[1]),true);
+        } else {
+            preg_match('/\d+\:\d+/',$url,$id);
+            $arr = json_decode($this->curl('https://video.h5.weibo.cn/s/video/object?object_id='.$id[0]),true);
+        }
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',
@@ -229,7 +234,7 @@ class Video
     }
     
     public function before($url){
-        preg_match('/detail\/:(.*)/',$url,$id);
+        preg_match('/detail\/(.*)\?/',$url,$id);
         $arr = json_decode($this->curl('https://hlg.xiatou.com/h5/feed/detail?id='.$id[1]),true);
         $arr = array(
             'code' => 200,
@@ -341,6 +346,30 @@ class Video
                 'title' => $arr["data"]["post"]["content"],
                 'cover' => 'https://file.ippzone.com/img/view/id/'.$arr["data"]["post"]["imgs"][0]["id"],
                 'url' => $arr["data"]["post"]["videos"]["$id"]["url"]
+            )
+        );
+        return $arr;
+    }
+
+    public function quanminkge($url){
+        preg_match('/\?s=(.*)/',$url,$id);
+        $text = $this->curl('https://kg.qq.com/node/play?s='.$id[1]);
+        preg_match('/<title>(.*?)-(.*?)-/', $text, $video_title);
+        preg_match('/cover\":\"(.*?)\"/', $text, $video_cover);
+        preg_match('/playurl_video\":\"(.*?)\"/', $text, $video_url);
+        preg_match('/{\"activity_id\":0\,\"avatar\":\"(.*?)\"/', $text, $video_avatar);
+        preg_match('/<p class=\"singer_more__time\">(.*?)<\/p>/', $text, $video_time);
+
+        $arr = array(
+            'code' => 200,
+            'msg' => '解析成功',
+            'author' => $video_title[1],
+            'avatar' => $video_avatar[1],
+            'time' => $video_time[1],
+            'data' => array(
+                'title' => $video_title[2],
+                'cover' => $video_cover[1],
+                'url' => $video_url[1],
             )
         );
         return $arr;
