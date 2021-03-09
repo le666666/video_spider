@@ -375,6 +375,28 @@ class Video
         return $arr;
     }
 
+	public function uc($url){
+		$arrHeader = json_encode(get_headers($url, true),JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+		preg_match('/"set-cookie": "vpstoken=(.*?);/',$arrHeader,$vpstoken);
+        $text = $this->curl($url);
+        preg_match('/"biz_id":(.*?),/',$text,$biz_id);
+		preg_match('/wm_aid=(.*?)\&/',$url,$wm_aid);
+		preg_match('/wm_id=(.*?)\&/',$url,$wm_id);
+		$arrInfo = json_decode($this->curl('https://ff.dayu.com/contents/origin/'.$wm_aid[1].'?biz_id='.$biz_id[1]), true);
+		$ums_id = $arrInfo['data']['body']['videos'] ['0']['ums_id'];
+		$wm_cid  = $arrInfo['data']['content_id'];
+		$arr = json_decode($this->curl('https://mparticle.uc.cn/api/vps?token='.$vpstoken[1].'&ums_id='.$ums_id.'&wm_cid='.$wm_cid.'&wm_id='.$wm_id[1]), true);
+		$arr = array(
+            'code' => 200,
+            'data' => array(
+                'title' => $arrInfo['data']['title'],
+                'cover' => $arrInfo['data']['cover_url'],
+                'url' =>  $arr['data']['url']
+            )
+        );
+        return $arr;
+    }
+	
     private function curl($url,$headers=[])
     {
         $header = array( 'User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1');
