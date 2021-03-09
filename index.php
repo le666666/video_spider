@@ -49,7 +49,7 @@ if (strpos($url,'pipix') !== false){
     $arr = $api->xiaokaxiu($url);
 } elseif (strpos($url, 'ippzone') !== false){
     $arr = $api->pipigaoxiao($url);
-} elseif (strpos($url, 'kg.qq.com') !== false){
+} elseif (strpos($url, 'qq.com') !== false){
     $arr = $api->quanminkge($url);
 } elseif (strpos($url, 'uc.cn') !== false){
     $arr = $api->uc($url);
