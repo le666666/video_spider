@@ -51,9 +51,11 @@ if (strpos($url,'pipix') !== false){
     $arr = $api->pipigaoxiao($url);
 } elseif (strpos($url, 'qq.com') !== false){
     $arr = $api->quanminkge($url);
-} elseif (strpos($url, 'uc.cn') !== false){
-    $arr = $api->uc($url);
-} else {
+} elseif (strpos($url, 'mparticle.uc.cn') !== false){
+    $arr = $api->uca($url);
+} elseif (strpos($url, 'v.uc.cn') !== false){
+    $arr = $api->ucv($url);
+}else {
     $arr = array(
         'code'  => 201,
         'msg' => '不支持您输入的链接'

@@ -375,7 +375,7 @@ class Video
         return $arr;
     }
 
-	public function uc($url){
+	public function uca($url){
 		$arrHeader = json_encode(get_headers($url, true),JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
 		preg_match('/"set-cookie": "vpstoken=(.*?);/',$arrHeader,$vpstoken);
         $text = $this->curl($url);
@@ -395,6 +395,26 @@ class Video
             )
         );
         return $arr;
+    }
+
+	public function ucv($url){
+		$text = $this->curl($url);
+        preg_match('/"ums_id":"(.*?)"/',$text,$ums_id);
+        preg_match('/"ts_sign":(.*?)}/',$text,$ts_sign);
+        preg_match('/"url_sign":"(.*?)"/',$text,$url_sign);
+        preg_match('/"biz_id":"(.*?)"/',$text,$biz_id);
+		preg_match('/"share_title":"(.*?)"/',$text,$title);
+		preg_match('/"url":"(.*?)"/',$text,$cover);
+		$arr = json_decode($this->curl('http://share.v.uc.cn/video/parser?ums_id='.$ums_id[1].'&ts_sign='.$ts_sign[1].'&biz_id='.$biz_id[1].'&url_sign='.$url_sign[1]), true);
+		$arr = array(
+            'code' => 200,
+            'data' => array(
+                'title' => $title[1],
+                'cover' => $cover[1],
+                'url' =>  $arr['data']['video_list'][0]['fragment_list'][0]['url']
+            )
+        );
+		return $arr;  
     }
 	
     private function curl($url,$headers=[])
