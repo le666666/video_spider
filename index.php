@@ -4,7 +4,9 @@ header('Content-type: application/json');
 ini_set('display_errors','off');
 error_reporting(E_ALL || ~E_NOTICE);
 require 'src/video_spider.php';
-$url = $_REQUEST['url'];
+//$url = rawurldecode($_REQUEST['url']);
+//$url = $_REQUEST['url'];
+$url=ourl();
 if (strstr($url,"t.cn")) {
 $url = getrealurl($url);
 };
@@ -62,6 +64,7 @@ if (strpos($url,'pipix') !== false){
     );
 }
 if (!empty($arr)){
+    //echo $url;
     echo json_encode($arr, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 //获取301跳转真实地址   
@@ -76,5 +79,10 @@ function getrealurl($url){
 	}else {
 		return $url;
 	}
+}
+//完整地址
+function ourl(){
+	preg_match('/\?url=(.*)/',$_SERVER['REQUEST_URI'],$url);
+	return $url[1];
 }
 ?>

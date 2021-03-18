@@ -8,7 +8,6 @@
 <meta name="force-rendering" content="webkit"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 <title>在线短视频去水印解析 - xkx</title>
-<link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/css/mdui.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/js/mdui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
@@ -114,8 +113,11 @@ video {
 <script>
 function  setValue(){
 var data =  document.getElementById("url").value;
-let regex = /http[s]?:\/\/[\w.]+[\w\/]*[\w.]*\??[\w=&:\-\+\%]*[/]*/;
-var v =  escape(data.match(regex)[0]);
+//let regex = /http[s]?:\/\/[\w.]+[\w\/]*[\w.]*\??[\w=&:\-\+\%]*[/]*/;
+//let regex = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g;
+let regex = /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;
+var v = data.match(regex)[0];
+//var v =  encodeURIComponent(data.match(regex)[0]);
 console.log(v);
 var xmlhttp;
 if(window.XMLHttpRequest){
@@ -133,7 +135,7 @@ if(code == 200){
   message: '解析成功,更多信息查看控制台.',
   timeout: 10000
   });
-$(".down").html('<h4>标题：'+jsonObj.data.title+' </h4><a class="mdui-btn mdui-btn-raised" href="'+jsonObj.data.url+'" target="_blank" download="video">下载视频</a><br><video controls="" height="500px"  name="media"><source src="'+(jsonObj.data.url).replace("http","https")+'" type="video/mp4"></video>');
+$(".down").html('<h4>标题：'+jsonObj.data.title+' </h4><a class="mdui-btn mdui-btn-raised" href="'+jsonObj.data.url+'" target="_blank" download="video">下载视频</a><br><video controls="" height="500px"  name="media"><source src="'+jsonObj.data.url+'" type="video/mp4"></video>');
 }else{
   mdui.snackbar({
   message: '解析失败,视频不存在或者链接不正确',
