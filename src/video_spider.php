@@ -253,7 +253,7 @@ class Video
     }
 
     public function kaiyan($url){
-        preg_match('/\?vid=(.*)\b/',$url,$id);
+        preg_match('/\?vid=(.*?)&\b/',$url,$id);
         $arr = json_decode($this->curl('https://baobab.kaiyanapp.com/api/v1/video/'.$id[1].'?f=web'),true);
         $video = 'https://baobab.kaiyanapp.com/api/v1/playUrl?vid='.$id[1].'&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss&ptl=true';
         $video_url = get_headers($video, true)["Location"];
